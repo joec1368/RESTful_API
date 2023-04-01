@@ -18,7 +18,21 @@ const getData = (id) => {
         console.error('SQL error: ', error);
         reject(error);
       }
-      resolve(results.rows[0].article + " " + results.rows[0].next)
+      const payload = [
+        {
+          "value":results.rows[0].article.trim()
+        },
+        {
+          "id":""
+        }
+      ];
+      if(results.rows[0].next != null){
+        payload[1].id = results.rows[0].next.trim();
+      }else{
+        payload[1].id = null;
+      }
+      
+      resolve(payload)
     });
   });
 };
@@ -41,7 +55,7 @@ const getDataAllInfo = (id) => {
 const createData = (input) => {//id,article,next
   return new Promise((resolve, reject) => {
       pool.query(' INSERT INTO "article" ("ID", "article","next","previous") VALUES ($1, $2,$3,$4)', 
-        [input.id,input.article,input.next,input.pre], (error, results) => {
+        [input.id,input.page,input.next,input.pre], (error, results) => {
       if (error) {
         console.error('SQL error: ', error);
         reject(error);
@@ -52,7 +66,7 @@ const createData = (input) => {//id,article,next
 };
 
 /* Post */
-const updateArticleAndSet = (input) => {//id,article,next
+const updatePageAndSet = (input) => {//id,page,next
   return new Promise((resolve, reject) => {
       pool.query(' SELECT * FROM "user" where "user"=$1', 
         [input], (error, results) => {
@@ -66,10 +80,10 @@ const updateArticleAndSet = (input) => {//id,article,next
   });
 };
 
-/* Article PUT 修改 */
-const modifyArticleNext = (id, next) => {
+/* Page PUT 修改 */
+const modifyPageNext = (id, next) => {
     return new Promise((resolve, reject) => {
-      pool.query('UPDATE "article" SET "next" = $2 WHERE "ID" = $1',
+      pool.query('UPDATE "article" SET "next" = $2 WHERE "next" = $1',
         [id, next], (error, results) => {
       if (error) {
         console.error('SQL error: ', error);
@@ -80,10 +94,10 @@ const modifyArticleNext = (id, next) => {
   });
 };
 
-/* Article PUT 修改 */
-const modifyArticlePre = (id, pre) => {
+/* Page PUT 修改 */
+const modifyPagePre = (id, pre) => {
     return new Promise((resolve, reject) => {
-      pool.query('UPDATE "article" SET "previous" = $2 WHERE "ID" = $1',
+      pool.query('UPDATE "article" SET "previous" = $2 WHERE "previous" = $1',
         [id, pre], (error, results) => {
       if (error) {
         console.error('SQL error: ', error);
@@ -94,11 +108,10 @@ const modifyArticlePre = (id, pre) => {
   });
 };
 
-/* Article PUT 修改 */
-const modifyArticle = (id,newID ,article) => {
+/* Page PUT 修改 */
+const modifyPage = (id,newID ,article) => {
     return new Promise((resolve, reject) => {
-      pool.query('UPDATE "article" SET "ID" = $1, "article" = $2 WHERE "ID" = $3',
-      // pool.query('UPDATE "article" SET ("ID", "article") VALUES ($1, $2) WHERE "ID" = $3',
+      pool.query(' UPDATE "article" SET "ID" = $1, "article" = $2 WHERE "ID" = $3',
         [newID, article,id], (error, results) => {
       if (error) {
         console.error('SQL error: ', error);
@@ -122,13 +135,27 @@ const deleteData = (id) => {
   });
 };
 
+const clearData = (id) => {
+  return new Promise((resolve, reject) => {
+      pool.query('TRUNCATE TABLE "article"',
+         (error, results) => {
+      if (error) {
+        console.error('SQL error: ', error);
+        reject(error);
+    }
+    resolve("clear succeed");
+    });
+  });
+};
+
 export default {
   getData,
   createData,
-  updateArticleAndSet,
-  modifyArticleNext,
-  modifyArticlePre,
-  modifyArticle,
+  updatePageAndSet,
+  modifyPageNext,
+  modifyPagePre,
+  modifyPage,
   getDataAllInfo,
+  clearData,
   deleteData
 };

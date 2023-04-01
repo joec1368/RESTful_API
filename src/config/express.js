@@ -17,6 +17,6 @@ app.get('/', (req, res) => {
   res.send(`server started on  port http://127.0.0.1:${config.port} (${config.env})`);
 });
 
-app.use('/api', index);
+app.use('/', index);
 
 export default app;

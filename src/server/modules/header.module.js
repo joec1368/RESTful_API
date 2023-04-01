@@ -10,7 +10,7 @@ const pool = new Pool({
 
 
 /* Get */
-const getALLUser = () => {
+const getALLHeader = () => {
   return new Promise((resolve, reject) => {
       pool.query(' SELECT * FROM "user"', (error, results) => {
       if (error) {
@@ -22,8 +22,20 @@ const getALLUser = () => {
   });
 };
 
+const getCertainHeader = (id) => {
+  return new Promise((resolve, reject) => {
+      pool.query(' SELECT * FROM "user" WHERE "user" = $1',[id], (error, results) => {
+      if (error) {
+        console.error('SQL error: ', error);
+        reject(error);
+    }
+    resolve(results.rows)
+    });
+  });
+};
+
 /* Post */
-const createUser = (insertValues) => {
+const createHeader = (insertValues) => {
   return new Promise((resolve, reject) => {
       pool.query(' INSERT INTO "user" ("user", "article_key") VALUES ($1, $2)', 
         [insertValues.name, insertValues.key], (error, results) => {
@@ -36,8 +48,22 @@ const createUser = (insertValues) => {
   });
 };
 
-/* Article PUT 修改 */
-const modifyUserID = (name, id) => {
+/* Header PUT 修改 */
+const modifyHeaderID = (name, id) => {
+    return new Promise((resolve, reject) => {
+      pool.query('UPDATE "user" SET "user" = $2 WHERE "user" = $1',
+        [name, id], (error, results) => {
+      if (error) {
+        console.error('SQL error: ', error);
+        reject(error);
+    }
+    resolve("change header name succeed");
+    });
+  });
+};
+
+/* Header page_id 修改 */
+const modifyHeaderPageID = (name, id) => {
     return new Promise((resolve, reject) => {
       pool.query('UPDATE "user" SET "article_key" = $2 WHERE "user" = $1',
         [name, id], (error, results) => {
@@ -45,13 +71,13 @@ const modifyUserID = (name, id) => {
         console.error('SQL error: ', error);
         reject(error);
     }
-    resolve("change user article_key succeed");
+    resolve("set page first name succeed");
     });
   });
 };
 
-/* Article PUT 修改 */
-const modifyUserFinal = (name, id) => {
+/* Header PUT 修改 */
+const modifyHeaderFinal = (name, id) => {
     return new Promise((resolve, reject) => {
       pool.query('UPDATE "user" SET "final" = $2 WHERE "user" = $1',
         [name, id], (error, results) => {
@@ -64,8 +90,8 @@ const modifyUserFinal = (name, id) => {
   });
 };
 
-/* Article  DELETE 刪除 */
-const deleteUser = (name) => {
+/* Header  DELETE 刪除 */
+const deleteHeader = (name) => {
   return new Promise((resolve, reject) => {
       pool.query('DELETE FROM "user" WHERE "user" = $1', [name],
          (error, results) => {
@@ -73,16 +99,31 @@ const deleteUser = (name) => {
         console.error('SQL error: ', error);
         reject(error);
     }
-    resolve("delete succeed");
+    resolve("delete header succeed");
     });
   });
 };
 
+const clearAllHeader = () => {
+  return new Promise((resolve, reject) => {
+      pool.query('TRUNCATE TABLE "user"',
+         (error, results) => {
+      if (error) {
+        console.error('SQL error: ', error);
+        reject(error);
+    }
+    resolve("clear succeed");
+    });
+  });
+}
 
 export default {
-  getALLUser,
-  createUser,
-  modifyUserID,
-  deleteUser,
-  modifyUserFinal
+  getALLHeader,
+  createHeader,
+  modifyHeaderID,
+  deleteHeader,
+  clearAllHeader,
+  modifyHeaderPageID,
+  getCertainHeader,
+  modifyHeaderFinal
 };

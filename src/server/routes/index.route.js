@@ -1,20 +1,14 @@
 import express from 'express';
 // Router
-import article from './article.route';
-import user from './test.route';
+import page from './page.route';
+import header from './header.route';
 
 import config from './../../config/config';
 
 const router = express.Router();
 
-
-/* GET localhost:[port]/api page. */
-router.get('/', (req, res) => {
-  res.send(`此路徑是: localhost:${config.port}/api`);
-});
-
-router.use('/article', article);
-router.use('/user', user);
+router.use('/page', page);
+router.use('/header', header);
 
 
 export default router;
