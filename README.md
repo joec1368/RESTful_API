@@ -17,7 +17,7 @@
         * next : 指向下一個 page
         * timeStamp : 哪時候被創立的
         * previous : 指向前一個 page
-* ![Go 版本](https://github.com/joec1368/Restful-API-GO)
+* Go 版本 : https://github.com/joec1368/Restful-API-GO)
 # 可以使用的 API :
 * header
     * GetHeader
